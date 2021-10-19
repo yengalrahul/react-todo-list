@@ -1,0 +1,63 @@
+import React,{useState,useEffect} from 'react';
+import Task from '../modals/Task';
+import Card from './Card';
+
+const Todolist = () => {
+
+const [modal, setModal] = useState(false);
+const [taskList,setTaskList]= useState([]);
+
+useEffect(() => {
+    let array= localStorage.getItem("taskList")
+   
+    if(array){
+        let obj =JSON.parse(array)
+        setTaskList(obj)
+    }
+   
+},[])
+
+const deleteTask=(index)=>{
+    let tempList = taskList
+    tempList.splice(index,1)
+    localStorage.setItem("taskList",JSON.stringify(tempList))
+    setTaskList(tempList)
+    window.location.reload()
+}
+
+const updateListArray =(obj, index)=>{
+let tempList= taskList
+tempList[index]= obj
+localStorage.setItem("taskList", JSON.stringify(tempList))
+setTaskList(tempList)
+window.location.reload()
+}
+
+const toggle =()=>{
+    setModal(!modal);
+}
+
+const saveTask=(taskObj)=>{
+let tempList = taskList
+tempList.push(taskObj)
+localStorage.setItem("taskList", JSON.stringify(tempList))
+
+setTaskList(taskList)
+setModal(false)
+}
+    return (
+       <div>
+            <div className="header text-center">
+                <h3>Todo List</h3>
+                <button className = "btn btn-primary mt-2" onClick = {()=>setModal(true)}>Create Task</button>
+            </div>
+            <div className= 'task-container '>
+                {taskList && taskList.map((obj, index)=> <Card taskObj={obj} index ={index} deleteTask={deleteTask} updateListArray={updateListArray}/>)}
+              
+            <Task modal={modal} toggle={toggle} save={saveTask}/>
+            </div>
+       </div>
+    );
+};
+
+export default Todolist;
